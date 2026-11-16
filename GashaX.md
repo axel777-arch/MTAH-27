@@ -28,7 +28,8 @@ tagging are automatic and noisy, so their outputs are treated as evidence rather
    ambiguous/missing candidate frames during a pending change. This temporal persistence is
    intended to suppress single-frame flicker and isolated touches.
 5. Keep the current possessor through ball-only tracking gaps. Output `X` when no owner has been
-   established or when player tracking disappears for a sustained interval.
+   established or when no players are tracked; forget the previous owner after 25 consecutive
+   frames with no tracked players.
 6. Output `D` when the ball is outside the normalized pitch boundary by more than 0.005 for at
    least three consecutive frames, or is moving at most 0.2 m/s inside an automatically tagged
    set-piece interval for at least five consecutive frames. Once confirmed, label the full evidence
@@ -49,17 +50,17 @@ Missing ATD values remain missing and are not interpreted as dead ball by themse
 The organizer's clarification prohibits checking predictions against the video and training,
 fitting, calibrating, or tuning on the provided video or possession ground truth. This system uses
 fixed heuristics, not fitted parameters. The public five-minute evaluator was run once as a
-report-only check (spellF1 0.4588, macroF1 0.5679 on 17 possessions); the result did not guide model
-selection or tuning. Match data must not be committed to the public repository, redistributed, or
-uploaded to hosted AI services.
+report-only check on an earlier model version; that result is not a score for this final version
+and did not guide model selection or tuning. Match data must not be committed to the public
+repository, redistributed, or uploaded to hosted AI services.
 
 ## Limitations
 
 Nearest-player distance is only a proxy for control. ATD tracklets can fragment or switch identity;
 the ball is often missing; Smart Tagging can be wrong; and the dead-ball cues do not represent every
 referee stoppage. The thresholds are engineering assumptions, not learned or validated probabilities.
-No accuracy or competition-score claim is made. The checks below establish synthetic behavior,
-CSV format, and deterministic regeneration only.
+No accuracy or competition-score claim is made for this final version. Synthetic tests, CSV format
+validation, and deterministic regeneration check implementation behavior, not prediction accuracy.
 
 ## Reproduction
 
@@ -72,6 +73,7 @@ python -m unittest discover -s tests -v
 ```
 
 The validator checks the exact submission format; it does not assess label correctness. The
-generated CSV is git-ignored and should be uploaded through the competition form, not committed to
-the public repository. Dependencies and implementation details are documented in
-[`MODEL_PROCESS.md`](MODEL_PROCESS.md).
+generated CSV is git-ignored. This technical note is also git-ignored because it is uploaded
+separately through the competition form; retain this local Markdown file for that upload. The
+source code and dependencies remain available for the public repository. Further implementation
+details are documented in [`MODEL_PROCESS.md`](MODEL_PROCESS.md).
